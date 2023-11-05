@@ -1,0 +1,30 @@
+name: Validate
+on:
+  workflow_call:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ main ]
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm lint
+
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        browser:
+          - firefox
+          - chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm install
+      - run: pnpm run build:${{ matrix.browser }}

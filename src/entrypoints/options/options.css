@@ -1,0 +1,52 @@
+html {
+    min-width: 550px;
+    overflow-x: hidden;
+    /* Required to hide horizontal scroll on Firefox */
+}
+
+#options-form input[type="text"],
+#options-form input[type="password"] {
+    margin: 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#options-form input:invalid {
+	border: 1px solid #f08080;
+}
+
+#options-form label.text-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+label.text-input>span:first-child {
+    flex: 0 0 auto;
+    padding-right: 10px;
+    width: 120px;
+}
+
+p.repo-source {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+}
+
+.repo-source input[type="text"] {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+label.text-input>.divider {
+    width: 20px;
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+hr {
+    margin-bottom: 15px;
+}

@@ -1,12 +1,15 @@
-# Bookmark Sync for GitHub 📖🔗
+<h1>
+  <img style="vertical-align:middle" width="44" src="./docs/bookmarksync-icon.svg" alt="Bookmarksync Logo">
+  <span>Bookmark Sync for GitHub</span>
+</h1>
 
-> Synchronize your browser bookmarks from a GitHub repository.
+> Synchronize browser bookmarks from a GitHub repository.
 
 ## 🚀 **Why Use This Extension?**
 
-Have you ever wished to share a common set of bookmarks across a team or organization without needing everyone to manually update their bookmarks? 
+Have you ever wished to share a common set of bookmarks across a team or organization without needing everyone to manually update their bookmarks?
 
-This extension allows for just that. 
+This extension allows for just that.
 
 Store bookmarks in a simple JSON structure in your organization's GitHub repository, and let everyone have the latest bookmarks at their fingertips.
 
@@ -23,11 +26,11 @@ Store bookmarks in a simple JSON structure in your organization's GitHub reposit
 
 ### Chrome
 
-Requires side-loading.
+Coming soon.
 
 ### Firefox
 
-Requires side-loading.
+Coming soon.
 
 ## 📖 Usage
 
@@ -49,7 +52,7 @@ Then make your bookmarks available at the source path in your repository to watc
 
 <details>
   <summary>Example Bookmark JSON (Click to expand)</summary>
-  
+
 ```json
 {
   "name": "Bookmarks 1",

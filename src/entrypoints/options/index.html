@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Options</title>
+    <meta name="manifest.open_in_tab" content="false" />
+    <meta name="manifest.browser_style" content="true" />
+</head>
+
+<body>
+    <form id="options-form" class="detail-view-container">
+        <p>
+            <label class="text-input">
+                <span>GitHub Personal Access Token</span>
+                <input type="password" name="pat" required>
+            </label>
+        </p>
+        <hr />
+        <p class="repo-source">
+            <label class="text-input">
+                <span>Repository</span>
+                <input type="text" name="owner" required placeholder="Owner">
+                <span class="divider">/</span>
+                <input type="text" name="repo" required placeholder="Repository">
+            </label>
+        </p>
+        <p>
+            <label class="text-input">
+                <span>Path</span>
+                <input type="text" name="sourcePath" required placeholder="File or folder">
+            </label>
+        </p>
+    </form>
+    <script src="./options.js" type="module"></script>
+</body>
+
+</html>
