@@ -1,0 +1,65 @@
+{
+	"name": "bookmarksync",
+	"description": "Synchronize browser bookmarks from a GitHub repository",
+	"private": true,
+	"version": "0.9.0",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"dev": "wxt",
+		"dev:firefox": "wxt -b firefox",
+		"build": "wxt build",
+		"build:firefox": "wxt build -b firefox",
+		"build:chrome": "wxt build -b chrome",
+		"zip": "wxt zip",
+		"zip:firefox": "wxt zip -b firefox",
+		"compile": "tsc --noEmit",
+		"lint": "concurrently \"npm:lint:*\"",
+		"lint-fix": "concurrently \"npm:lint:* -- --fix\"",
+		"lint:css": "stylelint src/**/*.css",
+		"lint:js": "xo",
+		"postinstall": "wxt prepare",
+		"prepare": "husky install"
+	},
+	"config": {
+		"commitizen": {
+			"path": "cz-conventional-changelog"
+		}
+	},
+	"xo": {
+		"envs": [
+			"browser",
+			"webextensions"
+		],
+		"rules": {
+			"unicorn/prefer-top-level-await": "off",
+			"n/file-extension-in-import": "off"
+		}
+	},
+	"stylelint": {
+		"rules": {
+			"function-whitespace-after": null,
+			"media-feature-range-operator-space-after": null,
+			"media-feature-range-operator-space-before": null
+		}
+	},
+	"devDependencies": {
+		"@commitlint/cli": "18.4.3",
+		"@commitlint/config-conventional": "18.4.3",
+		"concurrently": "^8.2.2",
+		"cz-conventional-changelog": "3.3.0",
+		"husky": "^8.0.3",
+		"stylelint": "^15.11.0",
+		"typescript": "^5.3.2",
+		"wxt": "^0.10.2",
+		"xo": "^0.56.0"
+	},
+	"dependencies": {
+		"@octokit/plugin-retry": "^6.0.1",
+		"@octokit/rest": "^20.0.2",
+		"@webext-core/job-scheduler": "^1.0.0",
+		"@webext-core/proxy-service": "^1.2.0",
+		"webext-base-css": "^1.4.4",
+		"webext-options-sync": "^4.2.1"
+	}
+}
