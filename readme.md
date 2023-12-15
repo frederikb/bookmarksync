@@ -24,13 +24,11 @@ Store bookmarks in a simple JSON structure in your organization's GitHub reposit
 
 ## 🛠 Installation
 
-### Chrome
+[link-firefox]: https://addons.mozilla.org/en-US/firefox/addon/bookmark-sync-for-github/ 'Version published on Mozilla Add-ons'
 
-Coming soon.
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/bookmark-sync-for-github.svg?label=%20">][link-firefox]
 
-### Firefox
-
-Coming soon.
+*Chrome and other Chromium browser: Coming soon.*
 
 ## 📖 Usage
 
