@@ -1,4 +1,4 @@
-import {defineBackground} from 'wxt/client';
+import {defineBackground} from 'wxt/sandbox';
 import {browser} from 'wxt/browser';
 import {defineJobScheduler} from '@webext-core/job-scheduler';
 import GitHubBookmarksLoader from '@/utils/github-bookmarks-loader.js';
