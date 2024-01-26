@@ -47,8 +47,8 @@ devDependencies:
     specifier: ^5.3.3
     version: 5.3.3
   wxt:
-    specifier: ^0.13.2
-    version: 0.13.2(@types/node@18.18.8)
+    specifier: ^0.14.6
+    version: 0.14.6(@types/node@18.18.8)
   xo:
     specifier: ^0.56.0
     version: 0.56.0(webpack@5.89.0)
@@ -4488,6 +4488,10 @@ packages:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
     dev: true
 
+  /manage-path@2.0.0:
+    resolution: {integrity: sha512-NJhyB+PJYTpxhxZJ3lecIGgh4kwIY2RAh44XvAz9UlqthlQwtPBf62uBVR8XaD8CRuSjQ6TnZH2lNJkbLPZM2A==}
+    dev: true
+
   /map-obj@1.0.1:
     resolution: {integrity: sha512-7N/q3lyZ+LVCp7PzuxrJr4KMbBE2hW7BT7YNia330OFxIf4d3r5zVpicP2650l7CPN6RM9zOJRl3NGpqSiw3Eg==}
     engines: {node: '>=0.10.0'}
@@ -6800,8 +6804,8 @@ packages:
         optional: true
     dev: true
 
-  /wxt@0.13.2(@types/node@18.18.8):
-    resolution: {integrity: sha512-IEWaMF8uq9FToUYQdjzyBJ7pBPyYXNBbesHHitPEV/dI9R354783RsBYdf8Zew/KS6XwFtIRQEp5XQJi29m5+A==}
+  /wxt@0.14.6(@types/node@18.18.8):
+    resolution: {integrity: sha512-40yZT0sl5tW9E2JlFNid/MeaNhZQ4JluSS9DcSOXHUQSWMvKLVdYIKCrcL/gOVvoxRDyjFZUUr4Sz++1hm213g==}
     engines: {node: '>=18', pnpm: '>=8'}
     hasBin: true
     dependencies:
@@ -6827,7 +6831,9 @@ packages:
       jiti: 1.21.0
       json5: 2.2.3
       linkedom: 0.16.1
+      manage-path: 2.0.0
       minimatch: 9.0.3
+      natural-compare: 1.4.0
       normalize-path: 3.0.0
       ora: 7.0.1
       picocolors: 1.0.0
