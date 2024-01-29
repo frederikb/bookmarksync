@@ -80,15 +80,27 @@ async function syncBookmarksRootNode(parentId, node, existingBookmarksAndFolders
 
 async function createBookmarks(parentId, bookmarks) {
 	const createPromises = bookmarks.map(item => {
-		if (item.children) {
+		if (item.type === 'folder' || item.children) {
 			return browser.bookmarks.create({parentId, title: item.title})
 				.then(newFolder => createBookmarks(newFolder.id, item.children));
+		}
+
+		if (item.type === 'separator') {
+			if (import.meta.env.FIREFOX) {
+				return createSeparator(parentId);
+			}
+
+			return;
 		}
 
 		return browser.bookmarks.create({parentId, title: item.title, url: item.url});
 	});
 
 	return Promise.all(createPromises);
+}
+
+async function createSeparator(parentId) {
+	return browser.bookmarks.create({parentId, type: 'separator'});
 }
 
 async function notify(title, message, type = 'basic') {
