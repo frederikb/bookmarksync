@@ -19,7 +19,7 @@
 		"lint:css": "stylelint src/**/*.css",
 		"lint:js": "xo",
 		"postinstall": "wxt prepare",
-		"prepare": "husky install"
+		"prepare": "husky"
 	},
 	"config": {
 		"commitizen": {
