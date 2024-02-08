@@ -1,0 +1,157 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json",
+	"title": "Bookmarks",
+	"description": "A named collection of bookmarks as used in a web browser",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"$schema": {
+			"type": "string",
+			"format": "uri",
+			"enum": [
+				"https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json"
+			],
+			"description": "The URI of this exact JSON schema"
+		},
+		"name": {
+			"type": "string",
+			"description": "Name of the bookmark collection."
+		},
+		"bookmarks": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/bookmarkItem"
+			},
+			"description": "Array of bookmarks, separators or folders."
+		}
+	},
+	"required": [
+		"name",
+		"bookmarks"
+	],
+	"definitions": {
+		"bookmarkItem": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string",
+					"description": "Title of the bookmark or folder. Required unless 'type' is 'separator'."
+				},
+				"url": {
+					"type": "string",
+					"format": "uri",
+					"description": "URL of the bookmark. Only for bookmarks."
+				},
+				"children": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/bookmarkItem"
+					},
+					"description": "Nested bookmarks or folders. Only for folders."
+				},
+				"type": {
+					"type": "string",
+					"enum": [
+						"folder",
+						"bookmark",
+						"separator"
+					],
+					"description": "Type of the item. If absent, inferred from properties."
+				}
+			},
+			"allOf": [
+				{
+					"if": {
+						"required": [
+							"type"
+						],
+						"properties": {
+							"type": {
+								"const": "separator"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"title": false,
+							"url": false,
+							"children": false
+						}
+					}
+				},
+				{
+					"if": {
+						"required": [
+							"type"
+						],
+						"properties": {
+							"type": {
+								"const": "bookmark"
+							}
+						}
+					},
+					"then": {
+						"required": [
+							"url",
+							"title"
+						],
+						"properties": {
+							"children": false
+						}
+					}
+				},
+				{
+					"if": {
+						"required": [
+							"type"
+						],
+						"properties": {
+							"type": {
+								"const": "folder"
+							}
+						}
+					},
+					"then": {
+						"required": [
+							"children"
+						],
+						"properties": {
+							"url": false
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": false
+						}
+					},
+					"then": {
+						"required": [
+							"title"
+						],
+						"oneOf": [
+							{
+								"required": [
+									"url"
+								],
+								"properties": {
+									"children": false
+								}
+							},
+							{
+								"required": [
+									"children"
+								],
+								"properties": {
+									"url": false
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	}
+}
