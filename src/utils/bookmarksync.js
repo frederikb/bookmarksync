@@ -45,11 +45,12 @@ async function syncBookmarksToBrowser(newBookmarks) {
 }
 
 async function findBookmarksBarId() {
-	const bookmarksTree = await browser.bookmarks.getTree();
-	const bookmarksBar = bookmarksTree[0].children.find(
-		node => node.title === 'Bookmarks Bar' || node.title === 'Bookmarks Toolbar',
-	);
-	return bookmarksBar ? bookmarksBar.id : null;
+	if (import.meta.env.FIREFOX) {
+		return 'toolbar_____';
+	}
+
+	// Assume that the bookmark bar has id '1' which works at least in Chrome and Orion
+	return '1';
 }
 
 async function getExisting(bookmarksBarId) {
