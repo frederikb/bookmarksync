@@ -4,13 +4,9 @@ import optionsStorage from '@/utils/options-storage.js';
 import {AuthenticationError, DataNotFoundError} from '@/utils/errors.js';
 
 class GitHubBookmarksLoader {
-	constructor() {
-		this.etag = null;
-	}
-
 	async load(force = false) {
 		try {
-			const {repo, owner, pat, sourcePath} = await optionsStorage.getAll();
+			const {repo, owner, pat, sourcePath, etag} = await optionsStorage.getAll();
 
 			if (!repo || !owner || !sourcePath || !pat) {
 				// Do not error out - perhaps the user just didn't yet set it up
@@ -29,7 +25,7 @@ class GitHubBookmarksLoader {
 				mediaType: {
 					format: sourcePath.endsWith('.json') ? 'raw' : 'json',
 				},
-				headers: this.etag && !force ? {'If-None-Match': this.etag} : {},
+				headers: etag && !force ? {'If-None-Match': etag} : {},
 			});
 
 			let bookmarkFileResponses = [];
@@ -58,7 +54,7 @@ class GitHubBookmarksLoader {
 			const bookmarks = bookmarkFileResponses
 				.flatMap(file => JSON.parse(file.data).bookmarks);
 
-			this.etag = response.headers.etag;
+			await optionsStorage.set({etag: response.headers.etag});
 			return bookmarks;
 		} catch (error) {
 			if (error.status === 304) {
