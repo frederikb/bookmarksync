@@ -24,7 +24,7 @@ export default defineBackground({
 		jobs.scheduleJob({
 			id: 'sync-bookmarks',
 			type: 'interval',
-			duration: 1000 * 3600 * 4, // Runs every 4 hours
+			duration: 1000 * 3600, // Runs hourly
 			execute() {
 				console.log('Scheduled sync bookmarks job');
 				syncBookmarks();
