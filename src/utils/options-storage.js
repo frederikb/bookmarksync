@@ -6,6 +6,7 @@ const optionsStorage = new OptionsSync({
 		owner: '',
 		repo: '',
 		sourcePath: '',
+		etag: '',
 	},
 	migrations: [
 		OptionsSync.migrations.removeUnused,
