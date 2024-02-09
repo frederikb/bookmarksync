@@ -14,4 +14,11 @@ class DataNotFoundError extends Error {
 	}
 }
 
-export {AuthenticationError, DataNotFoundError};
+class BookmarksDataNotValidError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = 'BookmarksDataNotValidError';
+	}
+}
+
+export {AuthenticationError, DataNotFoundError, BookmarksDataNotValidError};
