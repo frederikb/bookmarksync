@@ -89,6 +89,7 @@ Structure your JSON file for bookmarks as per the schema defined at [https://fre
 
 ```json
 {
+  "$schema": "https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json",
   "name": "Bookmarks 1",
   "bookmarks": [
     {
@@ -149,4 +150,5 @@ Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information
 ## 📣 Acknowledgements
 
 - [Octokit](https://github.com/octokit/core.js): Seamless GitHub API integration.
+- [Hyperjump - JSON Schema](https://github.com/hyperjump-io/json-schema): JSON Schema tooling.
 - This project was bootstrapped with [Web Extension Toolkit (wxt.dev)](https://wxt.dev).

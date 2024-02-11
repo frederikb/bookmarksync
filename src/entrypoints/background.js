@@ -10,6 +10,7 @@ export default defineBackground({
 
 	main() {
 		registerSyncBookmarks(new GitHubBookmarksLoader());
+
 		const syncBookmarks = getSyncBookmarks();
 
 		const jobs = defineJobScheduler();

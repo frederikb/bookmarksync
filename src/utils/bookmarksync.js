@@ -1,14 +1,23 @@
 import {browser} from 'wxt/browser';
 import {defineProxyService} from '@webext-core/proxy-service';
-import {AuthenticationError, DataNotFoundError} from './errors.js';
+import {registerSchema, validate} from '@hyperjump/json-schema/draft-07';
+import {AuthenticationError, BookmarksDataNotValidError, DataNotFoundError} from './errors.js';
+import bookmarkSchema from '@/utils/bookmarks.1-0-0.schema.json';
+
+registerSchema(bookmarkSchema);
 
 export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
 	'SyncBookmarksService',
 	loader => async function (force = false) {
 		try {
 			console.log(`Starting ${force ? 'forced ' : ''}bookmark synchronization`);
-			const bookmarksJson = await loader.load(force);
-			if (bookmarksJson) {
+
+			const bookmarkFiles = await loader.load(force);
+
+			if (bookmarkFiles) {
+				await validateBookmarkFiles(bookmarkFiles);
+				const bookmarksJson = bookmarkFiles.flatMap(file => file.bookmarks);
+
 				await syncBookmarksToBrowser(bookmarksJson);
 				await notify('Bookmarks synchronized', 'Your bookmarks have been updated.');
 				console.log('Bookmarks synchronized');
@@ -20,6 +29,9 @@ export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
 			} else if (error instanceof DataNotFoundError) {
 				console.error('Data not found error:', error.message, error.originalError);
 				await notify('Data not found', 'The bookmarks could not be found. Please check the configured repo and path.');
+			} else if (error instanceof BookmarksDataNotValidError) {
+				console.error('Bookmark data not valid error:', error.message);
+				await notify('Invalid bookmark data', `Canceling synchronization: ${error.message}`);
 			} else {
 				console.error('Error during synchronization:', error);
 				await notify('Synchronization failed', 'Failed to update bookmarks.');
@@ -27,6 +39,20 @@ export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
 		}
 	},
 );
+
+async function validateBookmarkFiles(bookmarkFiles) {
+	const BOOKMARK_SCHEMA_URI = 'https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json';
+	const validator = await validate(BOOKMARK_SCHEMA_URI);
+
+	for (const bookmarkFile of bookmarkFiles) {
+		const validationResult = validator(bookmarkFile);
+		if (!validationResult.valid) {
+			console.log(validationResult);
+			const name = bookmarkFile.name || '<name not defined>';
+			throw new BookmarksDataNotValidError(`The bookmarks file with name '${name}' is not valid`);
+		}
+	}
+}
 
 async function syncBookmarksToBrowser(newBookmarks) {
 	const bookmarksBarId = await findBookmarksBarId();

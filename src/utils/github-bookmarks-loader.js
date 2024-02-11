@@ -51,11 +51,10 @@ class GitHubBookmarksLoader {
 				bookmarkFileResponses = [response];
 			}
 
-			const bookmarks = bookmarkFileResponses
-				.flatMap(file => JSON.parse(file.data).bookmarks);
+			const bookmarkFiles = bookmarkFileResponses.map(file => JSON.parse(file.data));
 
 			await optionsStorage.set({etag: response.headers.etag});
-			return bookmarks;
+			return bookmarkFiles;
 		} catch (error) {
 			if (error.status === 304) {
 				console.log('No changes detected in bookmarks - nothing to sync');
