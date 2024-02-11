@@ -49,6 +49,41 @@ Access the extension's options and provide:
 
 Then make your bookmarks available at the source path in your repository to watch the magic happen.
 
+## 📄 Bookmark Collection JSON Format
+
+Structure your JSON file for bookmarks as per the schema defined at [https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json](https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json).
+
+### Top-Level Structure
+
+| Field       | Type   | Required | Description                       |
+|-------------|--------|----------|-----------------------------------|
+| `$schema`   | URI    | No       | Schema identifier.                |
+| `name`      | String | Yes      | Name of the bookmark collection.  |
+| `bookmarks` | Array  | Yes      | Array of bookmark items.          |
+
+### Bookmark Item Types
+
+#### Bookmark
+| Field   | Type   | Required | Description           |
+|---------|--------|----------|-----------------------|
+| `title` | String | Yes      | Title of the bookmark.|
+| `url`   | URI    | Yes      | URL of the bookmark.  |
+| `type`  | String | No       | Set to "bookmark".    |
+
+#### Folder
+| Field      | Type   | Required | Description                         |
+|------------|--------|----------|-------------------------------------|
+| `title`    | String | Yes      | Title of the folder.                |
+| `children` | Array  | Yes      | Array of nested bookmark items.     |
+| `type`     | String | No       | Set to "folder".                    |
+
+#### Separator
+| Field | Type   | Required | Description        |
+|-------|--------|----------|--------------------|
+| `type`| String | Yes      | Set to "separator".|
+
+### Example
+
 <details>
   <summary>Example Bookmark JSON (Click to expand)</summary>
 
@@ -71,6 +106,9 @@ Then make your bookmarks available at the source path in your repository to watc
               "url": "https://specs.example.com"
             },
             {
+                "type": "separator"
+            },
+            {
               "title": "Reports",
               "url": "https://reports.example.com"
             }
@@ -82,6 +120,7 @@ Then make your bookmarks available at the source path in your repository to watc
 }
 ```
 </details>
+
 
 ## 📸 Screenshots
 
