@@ -10,7 +10,7 @@
 			"type": "string",
 			"format": "uri",
 			"enum": [
-				"http://example.com/path/to/your/schema.1-0-0.schema.json"
+				"https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json"
 			],
 			"description": "The URI of this exact JSON schema"
 		},
