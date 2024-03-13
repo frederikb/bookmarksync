@@ -24,8 +24,8 @@ Store bookmarks in a simple JSON structure in your organization's GitHub reposit
 
 ## 🛠 Installation
 
-[link-chrome]: https://chromewebstore.google.com/detail/bookmark-sync-for-github/fponkkcbgphbndjgodphgebonnfgikkl?hl=en&pli=1 'Version published on Chrome Web Store'
-[link-firefox]: https://addons.mozilla.org/en-US/firefox/addon/bookmark-sync-for-github/ 'Version published on Mozilla Add-ons'
+[link-chrome]: https://chromewebstore.google.com/detail/bookmark-sync-for-github/fponkkcbgphbndjgodphgebonnfgikkl?pli=1 'Version published on Chrome Web Store'
+[link-firefox]: https://addons.mozilla.org/firefox/addon/bookmark-sync-for-github/ 'Version published on Mozilla Add-ons'
 
 [<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/bookmark-sync-for-github.svg?label=%20">][link-firefox]
 
