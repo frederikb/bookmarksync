@@ -1,12 +1,13 @@
 html {
     min-width: 550px;
-	min-height: 14rem;
+	min-height: 16rem;
     overflow-x: hidden;
     /* Required to hide horizontal scroll on Firefox */
 }
 
 #options-form input[type="text"],
-#options-form input[type="password"] {
+#options-form input[type="password"],
+#options-form input[type="url"] {
     margin: 0;
     padding: 5px;
     border: 1px solid #ccc;
@@ -52,6 +53,18 @@ hr {
     margin-bottom: 15px;
 }
 
+#customHostContainer {
+	visibility: visible;
+	transition: max-height 0.5s ease-in-out;
+	max-height: 10rem;
+	overflow: hidden;
+}
+
+#customHostContainer.hidden {
+	visibility: hidden;
+	max-height: 0;
+	transition: max-height 0.5s ease-in-out, visibility 0s 0.5s;
+}
 #check-connection-btn {
 	width: 11rem;
 	cursor: pointer;

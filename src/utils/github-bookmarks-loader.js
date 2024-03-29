@@ -7,14 +7,14 @@ import {
 
 class GitHubBookmarksLoader {
 	async load({force = false, cacheEtag = true} = {}) {
-		const {repo, owner, pat, sourcePath, etag} = await optionsStorage.getAll();
+		const {repo, owner, pat, sourcePath, etag, githubApiUrl} = await optionsStorage.getAll();
 
 		if (!repo || !owner || !sourcePath || !pat) {
 			throw new BookmarkSourceNotConfiguredError();
 		}
 
 		const MyOctokit = Octokit.plugin(retry);
-		const octokit = new MyOctokit({auth: pat});
+		const octokit = new MyOctokit({auth: pat, baseUrl: githubApiUrl || null});
 
 		console.info(`Starting sync with GitHub using ${owner}/${repo}/${sourcePath}`);
 

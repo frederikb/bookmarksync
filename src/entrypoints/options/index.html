@@ -11,7 +11,19 @@
 
 <body>
     <form id="options-form" class="detail-view-container">
-        <p>
+		<p>
+			<label>
+				<input type="checkbox" name="useCustomHost">
+				Use GitHub Enterprise Server
+			</label>
+		</p>
+		<p id="customHostContainer">
+			<label class="text-input">
+				<span>GitHub API URL</span>
+				<input type="url" name="githubApiUrl" required placeholder="https://github.yourdomain.com/api/v3">
+			</label>
+		</p>
+		<p>
             <label class="text-input">
                 <span>GitHub Personal Access Token</span>
                 <input type="password" name="pat" required>

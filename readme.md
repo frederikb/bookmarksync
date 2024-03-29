@@ -21,6 +21,7 @@ Store bookmarks in a simple JSON structure in your organization's GitHub reposit
 - 📁 **Multi-File Support**: Organize your organizations bookmarks into separate JSON files, for example by project.
 - 📢 **Notifications**: Stay informed about successful syncs or if any issues arise.
 - 🔒 **Secure**: Uses GitHub's Personal Access Token (PAT) for authentication, ensuring secure access.
+- 🌐 **GitHub Enterprise Support**: Synchronize bookmarks from GitHub or GitHub Enterprise Server (GHES).
 
 ## 🛠 Installation
 
@@ -46,8 +47,12 @@ Access the extension's options and provide:
 3. **Repository**: The name of the repository without the `.git` extension. The name is not case sensitive.
 4. **Source Path**: The path within the repository to either a single JSON file or a directory containing multiple JSON bookmark files. For a single file, provide the path e.g., `path/to/bookmarks.json`. For a directory, just specify the folder path e.g., `bookmarks`.
 
+You can also synchronize bookmarks from a GitHub Enterprise Server (GHES) by specifying the **GitHub API URL** (which ends with `/api/v3`).
+
 
 Then make your bookmarks available at the source path in your repository to watch the magic happen.
+
+Use the `Check Connection` to test the configuration.
 
 ## 📄 Bookmark Collection JSON Format
 
