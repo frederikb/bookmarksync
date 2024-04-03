@@ -2,7 +2,7 @@ import './popup.css';
 import logo from '@/assets/bookmarksync-icon.svg';
 import {getSyncBookmarks} from '@/utils/bookmarksync.js';
 
-const syncBookmarks = getSyncBookmarks();
+const bookmarkSyncService = getSyncBookmarks();
 
 document.querySelector('#bookmarksync-logo').src = logo;
 
@@ -13,7 +13,7 @@ syncButton.addEventListener('click', async () => {
 	syncButton.textContent = 'Synchronizing...';
 	syncButton.disabled = true;
 	try {
-		await syncBookmarks(true);
+		await bookmarkSyncService.synchronizeBookmarks(true);
 	} catch (error) {
 		console.error('Error triggering manual bookmark sync:', error);
 	} finally {

@@ -1,23 +1,41 @@
 import {Octokit} from '@octokit/rest';
 import {retry} from '@octokit/plugin-retry';
 import optionsStorage from '@/utils/options-storage.js';
-import {AuthenticationError, DataNotFoundError} from '@/utils/errors.js';
+import {
+	AuthenticationError, DataNotFoundError, BookmarkSourceNotConfiguredError, RepositoryNotFoundError,
+} from '@/utils/errors.js';
 
 class GitHubBookmarksLoader {
-	async load(force = false) {
-		try {
-			const {repo, owner, pat, sourcePath, etag} = await optionsStorage.getAll();
+	async load({force = false, cacheEtag = true} = {}) {
+		const {repo, owner, pat, sourcePath, etag} = await optionsStorage.getAll();
 
-			if (!repo || !owner || !sourcePath || !pat) {
-				// Do not error out - perhaps the user just didn't yet set it up
-				console.log('Sync from GitHub - required configuration values not set');
-				return null;
+		if (!repo || !owner || !sourcePath || !pat) {
+			throw new BookmarkSourceNotConfiguredError();
+		}
+
+		const MyOctokit = Octokit.plugin(retry);
+		const octokit = new MyOctokit({auth: pat});
+
+		console.info(`Starting sync with GitHub using ${owner}/${repo}/${sourcePath}`);
+
+		try {
+			// Explicitly checking for the existance of the repo is slower, but enables more specific error messages
+			// otherwise, we cannot differentiate between a wrong path and a wrong repo
+			await octokit.rest.repos.get({
+				owner,
+				repo,
+			});
+		} catch (error) {
+			if (error.status === 401) {
+				throw new AuthenticationError('Authentication with GitHub failed. Please check your PAT.', error);
+			} else if (error.status === 404) {
+				throw new RepositoryNotFoundError(`The repository '${owner}/${repo}' does not exist or is not accessible with the provided PAT.`, error);
 			}
 
-			const MyOctokit = Octokit.plugin(retry);
-			const octokit = new MyOctokit({auth: pat});
+			throw error;
+		}
 
-			console.info(`Starting sync with GitHub using ${owner}/${repo}/${sourcePath}`);
+		try {
 			const response = await octokit.rest.repos.getContent({
 				owner,
 				repo,
@@ -53,7 +71,10 @@ class GitHubBookmarksLoader {
 
 			const bookmarkFiles = bookmarkFileResponses.map(file => JSON.parse(file.data));
 
-			await optionsStorage.set({etag: response.headers.etag});
+			if (cacheEtag) {
+				await optionsStorage.set({etag: response.headers.etag});
+			}
+
 			return bookmarkFiles;
 		} catch (error) {
 			if (error.status === 304) {
@@ -64,7 +85,7 @@ class GitHubBookmarksLoader {
 			if (error.status === 401) {
 				throw new AuthenticationError('Authentication with GitHub failed. Please check your PAT.', error);
 			} else if (error.status === 404) {
-				throw new DataNotFoundError('The specified bookmarks file or folder was not found.', error);
+				throw new DataNotFoundError(`The specified bookmarks file or folder '${sourcePath}' was not found.`, error);
 			} else {
 				throw error;
 			}

@@ -11,7 +11,7 @@ export default defineBackground({
 	main() {
 		registerSyncBookmarks(new GitHubBookmarksLoader());
 
-		const syncBookmarks = getSyncBookmarks();
+		const bookmarkSyncService = getSyncBookmarks();
 
 		const jobs = defineJobScheduler();
 
@@ -19,7 +19,7 @@ export default defineBackground({
 
 		browser.runtime.onInstalled.addListener(details => {
 			console.log('Extension installed:', details);
-			syncBookmarks();
+			bookmarkSyncService.synchronizeBookmarks();
 		});
 
 		jobs.scheduleJob({
@@ -28,7 +28,7 @@ export default defineBackground({
 			duration: 1000 * 3600, // Runs hourly
 			execute() {
 				console.log('Scheduled sync bookmarks job');
-				syncBookmarks();
+				bookmarkSyncService.synchronizeBookmarks();
 			},
 		});
 
@@ -38,7 +38,7 @@ export default defineBackground({
 			date: Date.now() + (1000 * 30), // 30 seconds after extension init (browser start)
 			execute() {
 				console.log('Syncing bookmarks on browser startup');
-				syncBookmarks();
+				bookmarkSyncService.synchronizeBookmarks();
 			},
 		});
 	},
