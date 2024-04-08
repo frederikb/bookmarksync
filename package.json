@@ -50,7 +50,7 @@
 		"cz-conventional-changelog": "3.3.0",
 		"husky": "^9.0.10",
 		"stylelint": "^15.11.0",
-		"typescript": "^5.3.3",
+		"typescript": "^5.4.4",
 		"wxt": "^0.17.10",
 		"xo": "^0.57.0"
 	},
