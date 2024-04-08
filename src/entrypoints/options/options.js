@@ -57,6 +57,24 @@ async function init() {
 		}
 	};
 
+	const showCustomHostInput = checked => {
+		document.querySelector('#customHostContainer').className = checked ? '' : 'hidden';
+		document.querySelector('#customHostContainer input').required = checked;
+	};
+
+	const clearCustomHostInput = () => {
+		document.querySelector('[name="githubApiUrl"]').value = '';
+	};
+
+	const setupCustomHostInput = async () => {
+		const {useCustomHost} = await optionsStorage.getAll();
+		showCustomHostInput(useCustomHost);
+		if (!useCustomHost) {
+			await optionsStorage.set({githubApiUrl: ''});
+			clearCustomHostInput();
+		}
+	};
+
 	checkConnectionButton.addEventListener('click', async () => {
 		if (!form.checkValidity() || isChecking) {
 			return;
@@ -90,11 +108,13 @@ async function init() {
 		}
 	});
 
-	form.addEventListener('options-sync:form-synced', () => {
+	form.addEventListener('options-sync:form-synced', async () => {
 		cancelCurrentCheck = true;
+		await setupCustomHostInput();
 		resetCheckConnection();
 	});
 
+	await setupCustomHostInput();
 	resetCheckConnection();
 }
 
