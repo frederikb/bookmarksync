@@ -1,5 +1,6 @@
 html {
     min-width: 550px;
+	min-height: 14rem;
     overflow-x: hidden;
     /* Required to hide horizontal scroll on Firefox */
 }
@@ -49,4 +50,42 @@ label.text-input>.divider {
 
 hr {
     margin-bottom: 15px;
+}
+
+#check-connection-btn {
+	width: 11rem;
+	cursor: pointer;
+	display: inline-block;
+}
+
+#check-connection-btn:disabled {
+	cursor: not-allowed;
+}
+
+#check-connection-btn.in-progress {
+	cursor: progress;
+}
+
+#connection-message {
+	border-radius: 4px;
+	padding: 10px 15px;
+	margin: 10px 0;
+	display: block;
+	box-sizing: border-box;
+}
+
+#connection-message.hidden {
+	display: none;
+}
+
+#connection-message.success {
+	color: #003300;
+	background-color: #ccffcc;
+	border: 1px solid #004400;
+}
+
+#connection-message.error {
+	color: #330000;
+	background-color: #ffcccc;
+	border: 1px solid #440000;
 }

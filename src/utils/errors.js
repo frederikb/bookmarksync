@@ -6,6 +6,13 @@ class AuthenticationError extends Error {
 	}
 }
 
+class BookmarkSourceNotConfiguredError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = 'BookmarkSourceNotConfiguredError';
+	}
+}
+
 class DataNotFoundError extends Error {
 	constructor(message, originalError) {
 		super(message);
@@ -21,4 +28,14 @@ class BookmarksDataNotValidError extends Error {
 	}
 }
 
-export {AuthenticationError, DataNotFoundError, BookmarksDataNotValidError};
+class RepositoryNotFoundError extends Error {
+	constructor(message, originalError) {
+		super(message);
+		this.name = 'RepositoryNotFoundError';
+		this.originalError = originalError;
+	}
+}
+
+export {
+	AuthenticationError, DataNotFoundError, BookmarksDataNotValidError, BookmarkSourceNotConfiguredError, RepositoryNotFoundError,
+};

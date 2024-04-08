@@ -1,18 +1,25 @@
 import {browser} from 'wxt/browser';
 import {defineProxyService} from '@webext-core/proxy-service';
 import {registerSchema, validate} from '@hyperjump/json-schema/draft-07';
-import {AuthenticationError, BookmarksDataNotValidError, DataNotFoundError} from './errors.js';
+import {
+	BookmarkSourceNotConfiguredError, AuthenticationError, BookmarksDataNotValidError, DataNotFoundError, RepositoryNotFoundError,
+} from './errors.js';
 import bookmarkSchema from '@/utils/bookmarks.1-0-0.schema.json';
 
 registerSchema(bookmarkSchema);
 
-export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
-	'SyncBookmarksService',
-	loader => async function (force = false) {
+class BookmarkSyncService {
+	#loader;
+
+	constructor(loader) {
+		this.#loader = loader;
+	}
+
+	async synchronizeBookmarks(force = false) {
 		try {
 			console.log(`Starting ${force ? 'forced ' : ''}bookmark synchronization`);
 
-			const bookmarkFiles = await loader.load(force);
+			const bookmarkFiles = await this.#loader.load({force});
 
 			if (bookmarkFiles) {
 				await validateBookmarkFiles(bookmarkFiles);
@@ -23,21 +30,39 @@ export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
 				console.log('Bookmarks synchronized');
 			}
 		} catch (error) {
-			if (error instanceof AuthenticationError) {
+			if (error instanceof BookmarkSourceNotConfiguredError) {
+				// Do not error out - perhaps the user just didn't yet set it up
+				console.log('Could not sync because the required configuration values are not set');
+			} else if (error instanceof AuthenticationError) {
 				console.error('Authentication error:', error.message, error.originalError);
-				await notify('Authentication failed', 'Please check your Personal Access Token settings.');
+				await notify('Authentication failed', error.message);
 			} else if (error instanceof DataNotFoundError) {
 				console.error('Data not found error:', error.message, error.originalError);
-				await notify('Data not found', 'The bookmarks could not be found. Please check the configured repo and path.');
+				await notify('Data not found', error.message);
 			} else if (error instanceof BookmarksDataNotValidError) {
 				console.error('Bookmark data not valid error:', error.message);
 				await notify('Invalid bookmark data', `Canceling synchronization: ${error.message}`);
+			} else if (error instanceof RepositoryNotFoundError) {
+				console.error('Repository not found error:', error.message);
+				await notify('Repo not found', error.message);
 			} else {
 				console.error('Error during synchronization:', error);
 				await notify('Synchronization failed', 'Failed to update bookmarks.');
 			}
 		}
-	},
+	}
+
+	async validateBookmarks() {
+		console.log('Validating the configured source of bookmarks');
+
+		const bookmarkFiles = await this.#loader.load({force: true, cacheEtag: false});
+		await validateBookmarkFiles(bookmarkFiles);
+	}
+}
+
+export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
+	'SyncBookmarksService',
+	loader => new BookmarkSyncService(loader),
 );
 
 async function validateBookmarkFiles(bookmarkFiles) {
@@ -47,7 +72,6 @@ async function validateBookmarkFiles(bookmarkFiles) {
 	for (const bookmarkFile of bookmarkFiles) {
 		const validationResult = validator(bookmarkFile);
 		if (!validationResult.valid) {
-			console.log(validationResult);
 			const name = bookmarkFile.name || '<name not defined>';
 			throw new BookmarksDataNotValidError(`The bookmarks file with name '${name}' is not valid`);
 		}
