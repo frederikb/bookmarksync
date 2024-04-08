@@ -11,42 +11,69 @@
 
 <body>
     <form id="options-form" class="detail-view-container">
-		<p>
-			<label>
-				<input type="checkbox" name="useCustomHost">
-				Use GitHub Enterprise Server
-			</label>
-		</p>
-		<p id="customHostContainer">
-			<label class="text-input">
-				<span>GitHub API URL</span>
-				<input type="url" name="githubApiUrl" required placeholder="https://github.yourdomain.com/api/v3">
-			</label>
-		</p>
-		<p>
-            <label class="text-input">
-                <span>GitHub Personal Access Token</span>
-                <input type="password" name="pat" required>
-            </label>
-        </p>
-        <hr />
-        <p class="repo-source">
-            <label class="text-input">
-                <span>Repository</span>
-                <input type="text" name="owner" required placeholder="Owner">
-                <span class="divider">/</span>
-                <input type="text" name="repo" required placeholder="Repository">
-            </label>
-        </p>
-        <p>
-            <label class="text-input">
-                <span>Path</span>
-                <input type="text" name="sourcePath" required placeholder="File or folder">
-            </label>
-        </p>
-    </form>
-	<button id="check-connection-btn">Check Connection</button>
-	<p id="connection-message"></p>
+		<details id="source" role="term" open>
+			<summary><strong>🔄 Bookmarks source</strong></summary>
+		</details>
+		<div role="definition" class="content">
+			<div>
+				<p>
+					<label>
+						<input type="checkbox" name="useCustomHost">
+						Use GitHub Enterprise Server
+					</label>
+				</p>
+				<p id="customHostContainer">
+					<label class="text-input">
+						<span>GitHub API URL</span>
+						<input type="url" name="githubApiUrl" required placeholder="https://github.yourdomain.com/api/v3">
+					</label>
+				</p>
+				<p>
+					<label class="text-input">
+						<span>GitHub Personal Access Token</span>
+						<input type="password" name="pat" required>
+					</label>
+				</p>
+				<hr />
+				<p class="repo-source">
+					<label class="text-input">
+						<span>Repository</span>
+						<input type="text" name="owner" required placeholder="Owner">
+						<span class="divider">/</span>
+						<input type="text" name="repo" required placeholder="Repository">
+					</label>
+				</p>
+				<p>
+					<label class="text-input">
+						<span>Path</span>
+						<input type="text" name="sourcePath" required placeholder="File or folder">
+					</label>
+				</p>
+				<button id="check-connection-btn">Check Connection</button>
+				<div>
+					<p id="connection-message"></p>
+				</div>
+			</div>
+		</div>
+
+		<details id="export">
+			<summary><strong>🗄️ Export options</strong></summary>
+		</details>
+		<div role="definition" class="content">
+			<div>
+				<p>
+					You can export and import options across browsers and devices via a JSON file.
+				</p>
+				<p>
+					<strong>Note</strong> that your options include your access token!
+				</p>
+				<p>
+					<button type="button" class="js-export">Export</button>
+					<button type="button" class="js-import">Import</button>
+				</p>
+			</div>
+		</div>
+	</form>
     <script src="./options.js" type="module"></script>
 </body>
 
