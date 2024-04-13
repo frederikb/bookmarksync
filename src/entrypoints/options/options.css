@@ -1,8 +1,84 @@
 html {
     min-width: 550px;
-	min-height: 16rem;
+	min-height: 25rem;
     overflow-x: hidden;
-    /* Required to hide horizontal scroll on Firefox */
+	--details-border-left: 3px;
+	--details-color-default: #aaa1;
+	--details-color-active: #aaa4;
+	--details-animation-duration: 300ms;
+}
+
+output {
+	font-style: italic;
+}
+
+details {
+	overflow: hidden;
+}
+
+summary {
+	display: block;
+	--summary-padding: 10px;
+	background: #aaa1;
+	list-style: none;
+	padding: var(--summary-padding);
+	cursor: pointer;
+}
+
+summary::-webkit-details-marker {
+	display: none;
+	/* Just for Safari. Chrome uses `list-style` */
+}
+
+summary > strong::before {
+	display: inline-block;
+	content: "►";
+	font-size: .8rem;
+	vertical-align: middle;
+	margin-right: 0.5rem;
+	rotate: 0deg;
+	transition: rotate 200ms 100ms ease-out;
+}
+
+details:hover > summary {
+	background: #aaa4;
+}
+
+details:has(+ div.content:hover) > summary {
+	background: #aaa4;
+}
+
+details[open] summary {
+	padding-left: calc(var(--summary-padding) - var(--details-border-left));
+}
+
+details[open] summary > strong::before {
+	rotate: 90deg;
+	transition: rotate 200ms 100ms ease-out;
+}
+
+div.content {
+	margin-bottom: 1em;
+	border-left: solid var(--details-border-left) var(--details-color-default);
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows  var(--details-animation-duration) ease-out;
+}
+
+details + div.content {
+	padding-left: 10px;
+}
+
+details[open] + div.content {
+	grid-template-rows: 1fr;
+}
+
+div.content > div {
+	overflow: hidden;
+}
+
+details:hover, details + div.content:hover, details:hover + div.content, details:has(+ div.content:hover) {
+	border-left-color: var(--details-color-active);
 }
 
 #options-form input[type="text"],
