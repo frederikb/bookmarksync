@@ -6,11 +6,41 @@ import {
 } from '@/utils/errors.js';
 
 class GitHubBookmarksLoader {
-	async load({force = false, cacheEtag = true} = {}) {
-		const {repo, owner, pat, sourcePath, etag, githubApiUrl} = await optionsStorage.getAll();
+	async load(options = {}) {
+		const bookmarkFilesSource1 = await this.loadFromSource('source1', options);
+		const {source2_active} = await optionsStorage.getAll(); // eslint-disable-line camelcase
+		let bookmarkFilesSource2 = null;
+		if (source2_active) { // eslint-disable-line camelcase
+			bookmarkFilesSource2 = await this.loadFromSource('source2', options);
+		}
+
+		if (bookmarkFilesSource1 === null && bookmarkFilesSource2 === null) {
+			return null;
+		}
+
+		const bookmarkFiles = [];
+		if (bookmarkFilesSource1 !== null) {
+			bookmarkFiles.push(...bookmarkFilesSource1);
+		}
+
+		if (bookmarkFilesSource2 !== null) {
+			bookmarkFiles.push(...bookmarkFilesSource2);
+		}
+
+		return bookmarkFiles;
+	}
+
+	async loadFromSource(sourceId, {force = false, cacheEtag = true} = {}) {
+		const options = await optionsStorage.getAll();
+		const repo = options[`${sourceId}_repo`];
+		const owner = options[`${sourceId}_owner`];
+		const pat = options[`${sourceId}_pat`];
+		const sourcePath = options[`${sourceId}_sourcePath`];
+		const etag = options[`${sourceId}_etag`];
+		const githubApiUrl = options[`${sourceId}_githubApiUrl`];
 
 		if (!repo || !owner || !sourcePath || !pat) {
-			throw new BookmarkSourceNotConfiguredError();
+			throw new BookmarkSourceNotConfiguredError('Missing some or all required configuration values for the bookmark source');
 		}
 
 		const MyOctokit = Octokit.plugin(retry);
@@ -72,7 +102,8 @@ class GitHubBookmarksLoader {
 			const bookmarkFiles = bookmarkFileResponses.map(file => JSON.parse(file.data));
 
 			if (cacheEtag) {
-				await optionsStorage.set({etag: response.headers.etag});
+				const etagPropertyName = `${sourceId}_etag`;
+				await optionsStorage.set({[etagPropertyName]: response.headers.etag});
 			}
 
 			return bookmarkFiles;
