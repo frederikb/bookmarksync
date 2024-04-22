@@ -6,15 +6,52 @@ import {
 } from './errors.js';
 import bookmarkSchema from '@/utils/bookmarks.1-0-0.schema.json';
 
+/**
+ * @typedef {Object} BookmarkCollection
+ * @property {string} $schema - The URI of this exact JSON schema. Only allowed value is 'https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json'.
+ * @property {string} name - Name of the bookmark collection.
+ * @property {BookmarkItem[]} bookmarks - Array of bookmarks, separators or folders.
+ */
+
+/**
+ * @typedef {Object} BookmarkItem
+ * @property {string} [title] - Title of the bookmark or folder. Required unless 'type' is 'separator'.
+ * @property {string} [url] - URL of the bookmark. Only for bookmarks.
+ * @property {BookmarkItem[]} [children] - Nested bookmarks or folders. Only for folders.
+ * @property {'folder' | 'bookmark' | 'separator'} [type] - Type of the item. If absent, inferred from properties.
+ */
+
+/**
+ * Interface for a service capable of loading bookmark data.
+ * @typedef {Object} BookmarkLoader
+ * @property {function({force?: boolean, cacheEtag?: boolean}): Promise<BookmarkCollection[]>} load Loads bookmark data, optionally using cache control.
+ */
+
 registerSchema(bookmarkSchema);
 
+/**
+ * Service for synchronizing bookmarks to the browser's bookmark bar.
+ */
 class BookmarkSyncService {
+	/**
+	 * The loader for fetching bookmark data
+	 * @type {BookmarkLoader}
+	 */
 	#loader;
 
+	/**
+	 * @param {BookmarkLoader} loader the loader for fetching bookmark data
+	 */
 	constructor(loader) {
 		this.#loader = loader;
 	}
 
+	/**
+	 * Synchronizes bookmarks retrieved via the configured loader to the browser.
+	 *
+	 * @param {boolean} [force=false] whether to force re-fetching and synchronization of bookmarks
+	 * @returns {Promise<void>} a promise that resolves when synchronization is complete
+	 */
 	async synchronizeBookmarks(force = false) {
 		try {
 			console.log(`Starting ${force ? 'forced ' : ''}bookmark synchronization`);
@@ -52,6 +89,13 @@ class BookmarkSyncService {
 		}
 	}
 
+	/**
+	 * Validates that valid bookmarks can be retrieved from the configured source.
+	 *
+	 * Throws exceptions in case of any problems.
+	 *
+	 * @returns {Promise<void>} a promise that resolves when validation is complete
+	 */
 	async validateBookmarks() {
 		console.log('Validating the configured source of bookmarks');
 
@@ -65,6 +109,13 @@ export const [registerSyncBookmarks, getSyncBookmarks] = defineProxyService(
 	loader => new BookmarkSyncService(loader),
 );
 
+/**
+ * Validates bookmark files against the bookmarks JSON schema.
+ *
+ * @param {BookmarkCollection[]} bookmarkFiles an array of bookmark files to validate
+ * @throws {BookmarksDataNotValidError} thrown if any bookmark file fails to meet the schema requirements
+ * @returns {Promise<void>} a promise that resolves when all bookmark files have been validated
+ */
 async function validateBookmarkFiles(bookmarkFiles) {
 	const BOOKMARK_SCHEMA_URI = 'https://frederikb.github.io/bookmarksync/schemas/bookmarks.1-0-0.schema.json';
 	const validator = await validate(BOOKMARK_SCHEMA_URI);
@@ -78,8 +129,15 @@ async function validateBookmarkFiles(bookmarkFiles) {
 	}
 }
 
+/**
+ * Synchronize bookmarks to the browser's bookmarks bar.
+ *
+ * Replaces any existing bookmarks or folders with the same title.
+ *
+ * @param {BookmarkItem[]} newBookmarks the bookmarks
+ */
 async function syncBookmarksToBrowser(newBookmarks) {
-	const bookmarksBarId = await findBookmarksBarId();
+	const bookmarksBarId = findBookmarksBarId();
 	if (!bookmarksBarId) {
 		throw new Error('Bookmarks Bar not found');
 	}
@@ -87,47 +145,76 @@ async function syncBookmarksToBrowser(newBookmarks) {
 	const existingBookmarksAndFolders = await getExisting(bookmarksBarId);
 
 	const syncPromises = [];
-	for (const newFolder of newBookmarks) {
-		syncPromises.push(syncBookmarksRootNode(bookmarksBarId, newFolder, existingBookmarksAndFolders));
+	for (const newBookmarkItem of newBookmarks) {
+		syncPromises.push(syncBookmarksRootNode(bookmarksBarId, newBookmarkItem, existingBookmarksAndFolders));
 	}
 
 	await Promise.all(syncPromises);
 }
 
-async function findBookmarksBarId() {
+/**
+ * Fetches the bookmarks bar ID based on the browser for which this extension is compiled.
+ *
+ * @returns {string} the bookmarks bar ID
+ */
+function findBookmarksBarId() {
 	if (import.meta.env.FIREFOX) {
 		return 'toolbar_____';
 	}
 
-	// Assume that the bookmark bar has id '1' which works at least in Chrome and Orion
+	// Fallback to the id '1' which works at least in Chrome and Orion
 	return '1';
 }
 
+/**
+ * Retrieves the existing bookmarks under a given bookmarks bar by ID and maps them by title.
+ *
+ * @param {string} bookmarksBarId the ID of the bookmarks bar to retrieve children from
+ * @returns {Promise<Map<string, BookmarkTreeNode>>} a map of bookmark titles to their corresponding bookmark items
+ */
 async function getExisting(bookmarksBarId) {
 	const children = await browser.bookmarks.getChildren(bookmarksBarId);
-	const map = {};
-
-	for (const item of children) {
-		map[item.title] = item;
-	}
-
-	return map;
+	// eslint-disable-next-line unicorn/no-array-reduce
+	return children.reduce((accumulator, item) => accumulator.set(item.title, item), new Map());
 }
 
-async function syncBookmarksRootNode(parentId, node, existingBookmarksAndFolders) {
-	const existingNode = existingBookmarksAndFolders[node.title];
-	if (existingNode && existingNode.url) {
-		await browser.bookmarks.remove(existingNode.id);
-	} else if (existingNode && !existingNode.url) {
-		await browser.bookmarks.removeTree(existingNode.id);
+/**
+ * Synchronize a bookmark item to the bookmark bar.
+ *
+ * If an existing bookmark or folder with the same title is found directly on the bookmark bar it will be replaced.
+ * If the bookmark item to sync is a folder, it recursively creates its children.
+ *
+ * @param {string} bookmarkBarId the ID of the bookmarks bar where the bookmark or folder will be created
+ * @param {BookmarkItem} newBookmarkItem the bookmark item to sync
+ * @param {Map<string, BookmarkTreeNode>} existingBookmarksAndFolders a map of existing bookmark nodes and folders, keyed by title
+ */
+async function syncBookmarksRootNode(bookmarkBarId, newBookmarkItem, existingBookmarksAndFolders) {
+	const existingNode = existingBookmarksAndFolders.get(newBookmarkItem.title);
+
+	if (existingNode) {
+		await (existingNode.url ? browser.bookmarks.remove(existingNode.id) : browser.bookmarks.removeTree(existingNode.id));
 	}
 
-	const newNode = await browser.bookmarks.create({parentId, title: node.title, url: node.url});
-	if (!node.url) {
-		await createBookmarks(newNode.id, node.children);
+	const newNode = await browser.bookmarks.create({
+		parentId: bookmarkBarId,
+		title: newBookmarkItem.title,
+		url: newBookmarkItem.url,
+	});
+
+	if (!newBookmarkItem.url && newBookmarkItem.children) {
+		await createBookmarks(newNode.id, newBookmarkItem.children);
 	}
 }
 
+/**
+ * Creates bookmarks recursively under a specified parent node.
+ *
+ * It considers environmental differences, such as feature availability in different browsers.
+ *
+ * @param {string} parentId the ID of the parent node where the bookmarks will be created
+ * @param {BookmarkItem[]} bookmarks an array of bookmark items to create, which may include folders and separators
+ * @returns {Promise} a promise that resolves when all bookmarks have been created
+ */
 async function createBookmarks(parentId, bookmarks) {
 	const createPromises = bookmarks.map(item => {
 		if (item.type === 'folder' || item.children) {
@@ -140,7 +227,7 @@ async function createBookmarks(parentId, bookmarks) {
 				return createSeparator(parentId);
 			}
 
-			return;
+			return Promise.resolve();
 		}
 
 		return browser.bookmarks.create({parentId, title: item.title, url: item.url});
@@ -149,15 +236,34 @@ async function createBookmarks(parentId, bookmarks) {
 	return Promise.all(createPromises);
 }
 
+/**
+ * Creates a bookmark separator under a specified parent node.
+ *
+ * This functionality is typically browser-specific and might not be supported in all browsers.
+ * The caller is responsible for ensuring that this function is only called for supported browsers.
+ *
+ * @param {string} parentId the ID of the parent node under which to create the separator
+ * @returns {Promise<BookmarkTreeNode>} a promise that resolves to the newly created bookmark separator node
+ */
 async function createSeparator(parentId) {
 	return browser.bookmarks.create({parentId, type: 'separator'});
 }
 
+/**
+ * Send a branded browser notification.
+ *
+ * Wrapper around the <code>browser.notifications</code> API.
+ *
+ * @param {string} title the title of the notification
+ * @param {string} message the message content of the notification
+ * @param {string} [type='basic'] the type of notification to create
+ * @returns {Promise<string>} a promise that resolves to the ID of the created notification
+ */
 async function notify(title, message, type = 'basic') {
 	const id = `sync-bookmarks-notification-${Date.now()}`;
 	return browser.notifications.create(id, {
 		type,
-		iconUrl: browser.runtime.getURL('icon/128.png'),
+		iconUrl: browser.runtime.getURL('/icon/128.png'),
 		title,
 		message,
 	});
