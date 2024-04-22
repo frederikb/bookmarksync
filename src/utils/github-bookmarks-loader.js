@@ -19,7 +19,7 @@ class GitHubBookmarksLoader {
 		console.info(`Starting sync with GitHub using ${owner}/${repo}/${sourcePath}`);
 
 		try {
-			// Explicitly checking for the existance of the repo is slower, but enables more specific error messages
+			// Explicitly checking for the existence of the repo is slower, but enables more specific error messages
 			// otherwise, we cannot differentiate between a wrong path and a wrong repo
 			await octokit.rest.repos.get({
 				owner,
