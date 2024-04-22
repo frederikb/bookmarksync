@@ -11,47 +11,94 @@
 
 <body>
     <form id="options-form" class="detail-view-container">
-		<details id="source" role="term" open>
+		<details role="term" open>
 			<summary><strong>🔄 Bookmarks source</strong></summary>
 		</details>
 		<div role="definition" class="content">
 			<div>
-				<p>
-					<label>
-						<input type="checkbox" name="useCustomHost">
-						Use GitHub Enterprise Server
-					</label>
-				</p>
-				<p id="customHostContainer">
-					<label class="text-input">
-						<span>GitHub API URL</span>
-						<input type="url" name="githubApiUrl" required placeholder="https://github.yourdomain.com/api/v3">
-					</label>
-				</p>
-				<p>
-					<label class="text-input">
-						<span>GitHub Personal Access Token</span>
-						<input type="password" name="pat" required>
-					</label>
-				</p>
-				<hr />
-				<p class="repo-source">
-					<label class="text-input">
-						<span>Repository</span>
-						<input type="text" name="owner" required placeholder="Owner">
-						<span class="divider">/</span>
-						<input type="text" name="repo" required placeholder="Repository">
-					</label>
-				</p>
-				<p>
-					<label class="text-input">
-						<span>Path</span>
-						<input type="text" name="sourcePath" required placeholder="File or folder">
-					</label>
-				</p>
-				<button id="check-connection-btn">Check Connection</button>
+				<div id="source1">
+					<p>
+						<label>
+							<input type="checkbox" name="source1_useCustomHost">
+							Use GitHub Enterprise Server
+						</label>
+					</p>
+					<p class="custom-host-container">
+						<label class="text-input">
+							<span>GitHub API URL</span>
+							<input type="url" name="source1_githubApiUrl" required placeholder="https://github.yourdomain.com/api/v3">
+						</label>
+					</p>
+					<p>
+						<label class="text-input">
+							<span>GitHub Personal Access Token</span>
+							<input type="password" name="source1_pat" required>
+						</label>
+					</p>
+					<p class="repo-source">
+						<label class="text-input">
+							<span>Repository</span>
+							<input type="text" name="source1_owner" required placeholder="Owner">
+							<span class="divider">/</span>
+							<input type="text" name="source1_repo" required placeholder="Repository">
+						</label>
+					</p>
+					<p>
+						<label class="text-input">
+							<span>Path</span>
+							<input type="text" name="source1_sourcePath" required placeholder="File or folder">
+						</label>
+					</p>
+				</div>
 				<div>
-					<p id="connection-message"></p>
+					<hr/>
+					<p>
+						<label>
+							<input type="checkbox" name="source2_active">
+							Activate additional bookmark source
+						</label>
+					</p>
+				</div>
+				<div id="source2">
+					<p>
+						<label>
+							<input type="checkbox" name="source2_useCustomHost">
+							Use GitHub Enterprise Server
+						</label>
+					</p>
+					<p class="custom-host-container">
+						<label class="text-input">
+							<span>GitHub API URL</span>
+							<input type="url" name="source2_githubApiUrl" required placeholder="https://github.yourdomain.com/api/v3">
+						</label>
+					</p>
+					<p>
+						<label class="text-input">
+							<span>GitHub Personal Access Token</span>
+							<input type="password" name="source2_pat" required>
+						</label>
+					</p>
+					<p class="repo-source">
+						<label class="text-input">
+							<span>Repository</span>
+							<input type="text" name="source2_owner" required placeholder="Owner">
+							<span class="divider">/</span>
+							<input type="text" name="source2_repo" required placeholder="Repository">
+						</label>
+					</p>
+					<p>
+						<label class="text-input">
+							<span>Path</span>
+							<input type="text" name="source2_sourcePath" required placeholder="File or folder">
+						</label>
+					</p>
+				</div>
+				<div>
+					<hr/>
+					<button class="check-connection-btn">Check Connection(s)</button>
+					<div>
+						<p class="connection-message"></p>
+					</div>
 				</div>
 			</div>
 		</div>

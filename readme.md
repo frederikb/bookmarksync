@@ -15,11 +15,12 @@ Store bookmarks in a simple JSON structure in your organization's GitHub reposit
 
 ## 🚀 Features
 
-- 🔄 **Automatic Synchronization**: Sync bookmarks every hour and shortly after the browser starts.
+- ⏱️ **Automatic Synchronization**: Sync bookmarks every hour and shortly after the browser starts.
 - ✋ **Manual Sync**: Need the latest bookmarks immediately? Trigger a sync manually.
 - 🎯 **Selective Sync**: Syncs only the folders contained in the remote bookmark files without touching others you might have.
+- 🔄 **Multi-Source Synchronization**: Seamlessly integrate bookmarks from two separate sources, such as personal and work repositories.
 - 📁 **Multi-File Support**: Organize your organizations bookmarks into separate JSON files, for example by project.
-- 📢 **Notifications**: Stay informed about successful syncs or if any issues arise.
+- 🔔 **Notifications**: Stay informed about successful syncs or if any issues arise.
 - 🔒 **Secure**: Uses GitHub's Personal Access Token (PAT) for authentication, ensuring secure access.
 - 🌐 **GitHub Enterprise Support**: Synchronize bookmarks from GitHub or GitHub Enterprise Server (GHES).
 

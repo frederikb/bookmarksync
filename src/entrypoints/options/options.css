@@ -129,33 +129,47 @@ hr {
     margin-bottom: 15px;
 }
 
-#customHostContainer {
+.custom-host-container, #source2 {
 	visibility: visible;
 	transition: max-height 0.5s ease-in-out;
 	max-height: 10rem;
 	overflow: hidden;
 }
 
-#customHostContainer.hidden {
+.custom-host-container.hidden, #source2.hidden {
 	visibility: hidden;
 	max-height: 0;
 	transition: max-height 0.5s ease-in-out, visibility 0s 0.5s;
 }
-#check-connection-btn {
+
+#source2 {
+	visibility: visible;
+	transition: max-height 0.5s ease-in-out;
+	max-height: 15rem;
+	overflow: hidden;
+}
+
+#source2.hidden {
+	visibility: hidden;
+	max-height: 0;
+	transition: max-height 0.5s ease-in-out, visibility 0s 0.5s;
+}
+
+.check-connection-btn {
 	width: 11rem;
 	cursor: pointer;
 	display: inline-block;
 }
 
-#check-connection-btn:disabled {
+.check-connection-btn:disabled {
 	cursor: not-allowed;
 }
 
-#check-connection-btn.in-progress {
+.check-connection-btn.in-progress {
 	cursor: progress;
 }
 
-#connection-message {
+.connection-message {
 	border-radius: 4px;
 	padding: 10px 15px;
 	margin: 10px 0;
@@ -163,18 +177,26 @@ hr {
 	box-sizing: border-box;
 }
 
-#connection-message.hidden {
+.connection-message.hidden {
 	display: none;
 }
 
-#connection-message.success {
+.connection-message.success {
 	color: #003300;
 	background-color: #ccffcc;
 	border: 1px solid #004400;
 }
 
-#connection-message.error {
+.connection-message.error {
 	color: #330000;
 	background-color: #ffcccc;
 	border: 1px solid #440000;
+}
+
+/* Firefox specific styling overrides */
+@-moz-document url-prefix('') {
+	input[type='checkbox'] {
+		/* override webext-base-css style to better align checkboxes with single line labels */
+		vertical-align: -0.1em;
+	}
 }

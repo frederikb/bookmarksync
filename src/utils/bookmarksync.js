@@ -60,9 +60,9 @@ class BookmarkSyncService {
 
 			if (bookmarkFiles) {
 				await validateBookmarkFiles(bookmarkFiles);
-				const bookmarksJson = bookmarkFiles.flatMap(file => file.bookmarks);
-
-				await syncBookmarksToBrowser(bookmarksJson);
+				const bookmarks = bookmarkFiles.flatMap(file => file.bookmarks);
+				const deduplicatedBookmarks = removeDuplicatesByTitle(bookmarks);
+				await syncBookmarksToBrowser(deduplicatedBookmarks);
 				await notify('Bookmarks synchronized', 'Your bookmarks have been updated.');
 				console.log('Bookmarks synchronized');
 			}
@@ -127,6 +127,16 @@ async function validateBookmarkFiles(bookmarkFiles) {
 			throw new BookmarksDataNotValidError(`The bookmarks file with name '${name}' is not valid`);
 		}
 	}
+}
+
+/**
+ * Remove duplicate bookmark nodes based on their title.
+ *
+ * @param {BookmarkItem[]} bookmarks the bookmarks
+ * @returns {BookmarkItem[]} the deduplicated bookmarks
+ */
+function removeDuplicatesByTitle(bookmarks) {
+	return Array.from(new Map(bookmarks.map(item => [item.title, item])).values());
 }
 
 /**
