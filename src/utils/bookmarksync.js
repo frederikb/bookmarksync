@@ -144,12 +144,10 @@ async function syncBookmarksToBrowser(newBookmarks) {
 
 	const existingBookmarksAndFolders = await getExisting(bookmarksBarId);
 
-	const syncPromises = [];
 	for (const newBookmarkItem of newBookmarks) {
-		syncPromises.push(syncBookmarksRootNode(bookmarksBarId, newBookmarkItem, existingBookmarksAndFolders));
+		// eslint-disable-next-line no-await-in-loop
+		await syncBookmarksRootNode(bookmarksBarId, newBookmarkItem, existingBookmarksAndFolders);
 	}
-
-	await Promise.all(syncPromises);
 }
 
 /**
@@ -216,24 +214,20 @@ async function syncBookmarksRootNode(bookmarkBarId, newBookmarkItem, existingBoo
  * @returns {Promise} a promise that resolves when all bookmarks have been created
  */
 async function createBookmarks(parentId, bookmarks) {
-	const createPromises = bookmarks.map(item => {
+	/* eslint-disable no-await-in-loop */
+	for (const item of bookmarks) {
 		if (item.type === 'folder' || item.children) {
-			return browser.bookmarks.create({parentId, title: item.title})
-				.then(newFolder => createBookmarks(newFolder.id, item.children));
-		}
-
-		if (item.type === 'separator') {
+			const newFolder = await browser.bookmarks.create({parentId, title: item.title});
+			await createBookmarks(newFolder.id, item.children);
+		} else if (item.type === 'separator') {
 			if (import.meta.env.FIREFOX) {
-				return createSeparator(parentId);
+				await createSeparator(parentId);
 			}
-
-			return Promise.resolve();
+		} else {
+			await browser.bookmarks.create({parentId, title: item.title, url: item.url});
 		}
-
-		return browser.bookmarks.create({parentId, title: item.title, url: item.url});
-	});
-
-	return Promise.all(createPromises);
+	}
+	/* eslint-enable no-await-in-loop */
 }
 
 /**
