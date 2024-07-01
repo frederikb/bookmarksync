@@ -62,6 +62,6 @@
 		"@webext-core/job-scheduler": "^1.0.0",
 		"@webext-core/proxy-service": "^1.2.0",
 		"webext-base-css": "^1.4.4",
-		"webext-options-sync": "^4.2.1"
+		"webext-options-sync": "^4.2.3"
 	}
 }
