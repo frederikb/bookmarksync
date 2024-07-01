@@ -51,7 +51,7 @@
 		"husky": "^9.0.11",
 		"stylelint": "^15.11.0",
 		"typescript": "^5.4.5",
-		"wxt": "^0.17.12",
+		"wxt": "^0.18.10",
 		"xo": "^0.58.0"
 	},
 	"dependencies": {
